@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Activity log</h1>
+<p class="lead">Every step is recorded. If it isn't in the log, it didn't happen.</p>
+<div class="cards">
+  <div class="card"><div class="num">{{ totals.events }}</div><div class="lbl">events</div></div>
+  <div class="card"><div class="num">{{ totals.pending }}</div><div class="lbl">pending approvals</div></div>
+  <div class="card"><div class="num">{{ totals.avg_edit }}</div><div class="lbl">avg edit distance</div></div>
+  <div class="card"><div class="num">{{ totals.input_tokens + totals.output_tokens }}</div><div class="lbl">tokens</div></div>
+  <div class="card"><div class="num">${{ '%.4f'|format(totals.cost_usd) }}</div><div class="lbl">cost (USD)</div></div>
+</div>
+<table class="list log">
+  <thead><tr><th>Time</th><th>Agent</th><th>Action</th><th>Message</th><th>Detail</th></tr></thead>
+  <tbody>
+  {% for e in events %}
+    <tr>
+      <td class="mono">{{ e.ts[11:19] }}</td>
+      <td>{{ e.agent }}</td>
+      <td><span class="act">{{ e.action }}</span></td>
+      <td class="mono">{{ e.message_id or e.reservation_id or '' }}</td>
+      <td class="clip">{{ e.detail }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

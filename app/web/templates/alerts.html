@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Safety alerts</h1>
+<p class="lead">These skipped the queue. No reply was drafted - a person was notified directly.</p>
+{% for it in items %}
+  <div class="alertcard {{ 'done' if it.alert.acknowledged_at }}">
+    <div class="alerthead">
+      <span class="mono">{{ it.alert.message_id }}</span>
+      <span class="pill red">to {{ it.alert.team }}</span>
+      <span class="muted">callback {{ it.alert.callback }} - {{ it.alert.created_at }}</span>
+    </div>
+    <p>{{ it.msg.body if it.msg else it.alert.summary }}</p>
+    {% if it.alert.acknowledged_at %}
+      <div class="ack">Acknowledged {{ it.alert.acknowledged_at }}</div>
+    {% else %}
+      <form method="post" action="/alerts/{{ it.alert.alert_id }}/ack">
+        <button class="btn" type="submit">Acknowledge</button>
+      </form>
+    {% endif %}
+  </div>
+{% else %}
+  <p>No alerts.</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,75 @@
+# Deterministic rules. Evaluated in order after pre-model guards; first match wins.
+# Keyword and pattern matching is case-insensitive and whole-word/phrase (\b boundaries).
+safety_keywords:
+  - taking on water
+  - sinking
+  - capsized
+  - fire
+  - smoke
+  - fuel spill
+  - fuel smell
+  - gas smell
+  - smell of gas
+  - sheen
+  - injured
+  - injury
+  - bleeding
+  - fell in
+  - fell off
+  - overboard
+  - drowning
+  - ambulance
+  - "911"
+  - electric shock
+safety:
+  action: alert
+  team: dockmaster
+  notify: [dockmaster, office]
+
+prompt_injection_patterns:
+  - ignore (all |any )?(previous|prior) instructions
+  - you are now
+  - system prompt
+  - list of (all )?(guests|customers)
+  - disregard (the )?rules
+
+low_confidence_threshold: 0.70
+
+rules:
+  - id: legal_threat
+    when: {text_matches: "(lawyer|attorney|lawsuit|sue you|legal action)"}
+    action: human
+    team: office
+    urgency: today
+  - id: complaint_or_dispute
+    when: {intent: complaint_or_dispute}
+    action: human
+    team: office
+  - id: cancel_or_refund
+    when: {intent: change_or_cancel, text_matches: "(cancel|refund)"}
+    action: human
+    team: office
+  - id: payment
+    when: {intent: payment}
+    action: human
+    team: office
+  - id: seasonal_tenant
+    when: {sender_reservation_unit_type: seasonal_slip}
+    action: human
+    team: dockmaster
+  - id: group_booking
+    when: {units_requested_gt: 3}
+    action: human
+    team: office
+  - id: urgent_service
+    when: {intent: boatyard_service, urgency_in: [immediate, today]}
+    action: human
+    team: boatyard
+  - id: vendor_other
+    when: {intent: other, spam: false}
+    action: human
+    team: office
+  - id: low_confidence
+    when: {confidence_lt: 0.70}
+    action: human
+    team: office

@@ -1,0 +1,23 @@
+reservation_id,guest_name,email,phone,unit_type,unit_id,arrival,departure,vessel_name,length_ft,beam_ft,insurance_cert,vessel_registration,signed_contract,deposit_paid,last_guest_contact,status
+R-0901,Dale Whitfield,dale.whitfield@example.com,555-0102,seasonal_slip,S07,2026-05-01,2026-10-15,Blue Heron,34,12,ok,ok,ok,ok,2026-07-30T10:00:00-04:00,active
+R-0988,Marcus Bell,marcus.bell@example.com,555-0171,campsite_rv_full,RV8,2026-07-10,2026-07-13,,36,,n/a,n/a,ok,ok,2026-07-13T11:00:00-04:00,completed
+R-1042,Ben Carter,ben.carter@example.com,555-0176,campsite_rv_full,RV4,2026-08-22,2026-08-25,,31,,n/a,n/a,ok,ok,,in_house
+R-1045,Troy Mason,troy.mason@example.com,555-0181,campsite_rv_full,RV3,2026-08-22,2026-08-25,,29,,n/a,n/a,ok,ok,,in_house
+R-1061,Rachel Soto,rachel.soto@example.com,555-0115,campsite_tent,T4,2026-08-21,2026-08-24,,,,n/a,n/a,ok,ok,,in_house
+R-1062,Greg Novak,greg.novak@example.com,555-0163,transient_slip,D3,2026-08-21,2026-08-24,Reel Time,28,10,ok,ok,ok,ok,,in_house
+R-1043,Ken Adams,ken.adams@example.com,555-0158,campsite_rv_full,RV7,2026-08-24,2026-08-27,,33,,n/a,n/a,ok,ok,,confirmed
+R-1046,Victor Hale,victor.hale@example.com,555-0149,transient_slip,D3,2026-08-26,2026-08-28,Hale Storm,27,9,ok,missing,ok,ok,,confirmed
+R-1047,Chris Donnelly,chris.donnelly@example.com,555-0147,transient_slip,D4,2026-08-26,2026-08-29,Wanderlust,29,10,missing,ok,ok,ok,,confirmed
+R-1052,Jordan Lee,jordan.lee@example.com,555-0152,campsite_rv_full,RV9,2026-08-26,2026-08-29,,35,,n/a,n/a,missing,ok,,confirmed
+R-1058,Amy Tran,amy.tran@example.com,555-0131,campsite_tent,T1,2026-08-28,2026-08-30,,,,n/a,n/a,ok,ok,,confirmed
+R-1059,Paul Grady,paul.grady@example.com,555-0136,transient_slip,D1,2026-08-28,2026-08-30,Knot Working,26,9,ok,ok,ok,ok,,confirmed
+R-1048,Sofia Russo,sofia.russo@example.com,555-0125,transient_slip,D2,2026-08-31,2026-09-02,Sea Esta,30,10,missing,ok,ok,ok,,confirmed
+R-1050,Ian Brooks,ian.brooks@example.com,555-0174,campsite_rv_full,RV2,2026-08-31,2026-09-03,,32,,n/a,n/a,ok,missing,,confirmed
+R-1049,Omar Haddad,omar.haddad@example.com,555-0145,transient_slip,D6,2026-09-01,2026-09-03,Tide Runner,36,12,missing,ok,ok,ok,,confirmed
+R-1051,Linda Park,linda.park@example.com,555-0139,transient_slip,D5,2026-09-04,2026-09-07,Serenity,39,13,ok,ok,ok,ok,,confirmed
+R-1053,Walt Fischer,walt.fischer@example.com,555-0112,transient_slip,D7,2026-09-04,2026-09-07,Fishful Thinking,45,15,ok,ok,ok,ok,,confirmed
+R-1055,Kara Singh,kara.singh@example.com,555-0118,campsite_rv_full,RV5,2026-09-07,2026-09-10,,28,,n/a,n/a,missing,missing,,confirmed
+R-1056,Dan Ruiz,dan.ruiz@example.com,555-0184,campsite_rv_full,RV1,2026-09-10,2026-09-14,,38,,n/a,n/a,ok,ok,,confirmed
+R-1054,Mia Foster,mia.foster@example.com,555-0192,campsite_tent,T3,2026-09-10,2026-09-12,,,,n/a,n/a,ok,missing,,confirmed
+R-1057,Beth Lowe,beth.lowe@example.com,555-0187,campsite_rv_full,RV2,2026-09-11,2026-09-13,,34,,n/a,n/a,ok,ok,,confirmed
+R-1044,Nora Quinn,nora.quinn@example.com,555-0166,campsite_rv_full,RV6,2026-09-18,2026-09-20,,30,,n/a,n/a,ok,ok,,confirmed

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Lakeside Cove front desk{% endblock %}</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Lakeside Cove <span>front desk</span></div>
+    <nav>
+      <a href="/">Inbox</a>
+      <a href="/queue">Approval queue</a>
+      <a href="/needs-person">Needs a person</a>
+      <a href="/alerts">Alerts</a>
+      <a href="/log">Activity log</a>
+    </nav>
+    <form action="/reset" method="post" class="reset"><button type="submit">Reset demo</button></form>
+  </header>
+
+  {% if active_alerts %}
+  <div class="banner">
+    <strong>{{ active_alerts|length }} safety alert{{ 's' if active_alerts|length != 1 else '' }}</strong>
+    need attention -
+    {% for a in active_alerts %}<a href="/alerts">{{ a.message_id }}</a>{% if not loop.last %}, {% endif %}{% endfor %}
+  </div>
+  {% endif %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <footer>Demo - fictional data. Nothing is sent to a guest without approval. Clock fixed at {{ now.strftime('%A %d %B %Y, %-I:%M %p') }}.</footer>
+</body>
+</html>

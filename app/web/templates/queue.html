@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Approval queue</h1>
+<p class="lead">Every guest-facing message is a draft until your team approves it.</p>
+{% if not groups %}<p>Nothing pending.</p>{% endif %}
+{% for team, rows in groups.items() %}
+  <h2 class="team">{{ team }}</h2>
+  <table class="list">
+    <thead><tr><th>Draft</th><th>Kind</th><th>Summary</th><th>Grounding</th><th></th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td>#{{ row.draft.draft_id }}{% if row.draft.message_id %} <span class="mono">{{ row.draft.message_id }}</span>{% elif row.draft.reservation_id %} <span class="mono">{{ row.draft.reservation_id }}</span>{% endif %}</td>
+        <td>{{ row.draft.kind }}</td>
+        <td>{{ row.summary or row.draft.subject }}</td>
+        <td>{% if row.draft.grounding.passed %}<span class="ok">grounded</span>{% else %}<span class="bad">check</span>{% endif %}</td>
+        <td><a class="btn small" href="/queue/{{ row.draft.draft_id }}">Open</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,20 @@
+# Business rates (mirror of policies P2, P3, P5 — keep in sync) and model prices for COST.md.
+rates:
+  transient_slip: {per_ft_night: 3.50, min_ft: 30}
+  seasonal_slip: {per_ft_season: 95.00}
+  campsite_rv_full: {per_night: 68.00, max_length_ft: 40}
+  campsite_rv_we: {per_night: 52.00, max_length_ft: 32}
+  campsite_tent: {per_night: 35.00}
+  haul_out: {per_ft: 14.00}
+  launch_ramp: {per_day: 15.00}
+  trailer_parking: {per_day: 10.00}
+deposit: first_night
+holiday_min_nights: 3
+holidays:
+  - {name: Labour Day, start: 2026-09-04, end: 2026-09-07}
+  - {name: Labour Day 2027, start: 2027-09-03, end: 2027-09-06}
+# USD per million tokens. Placeholder values — check current Anthropic pricing before quoting a client.
+models:
+  claude-haiku: {input: 1.00, output: 5.00}
+  claude-sonnet: {input: 3.00, output: 15.00}
+  ollama-local: {input: 0.00, output: 0.00}

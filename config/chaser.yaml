@@ -1,0 +1,16 @@
+offsets_days: [14, 7, 2]
+quiet_if_guest_contact_within_hours: 48
+max_reminders_per_reservation_per_day: 1
+received_statuses: [ok, received_pending_review]
+required_items:
+  transient_slip: [insurance_cert, vessel_registration, signed_contract, deposit_paid]
+  campsite_rv_full: [signed_contract, deposit_paid]
+  campsite_rv_we: [signed_contract, deposit_paid]
+  campsite_tent: [signed_contract, deposit_paid]
+  seasonal_slip: []          # handled by the dockmaster, never chased
+item_labels:
+  insurance_cert: "certificate of liability insurance (P6)"
+  vessel_registration: "current vessel registration or USCG documentation (P7)"
+  signed_contract: "signed rental agreement (P8)"
+  deposit_paid: "first-night deposit (P3)"
+team: office

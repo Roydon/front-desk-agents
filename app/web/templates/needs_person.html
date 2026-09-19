@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Needs a person</h1>
+<p class="lead">The agents deliberately did not draft a reply for these - each one is a judgment call.</p>
+<table class="list">
+  <thead><tr><th>Message</th><th>Reason</th><th>Team</th><th>What came in</th></tr></thead>
+  <tbody>
+  {% for it in items %}
+    <tr>
+      <td class="mono">{{ it.id }}</td>
+      <td><span class="reason">{{ it.reason_label }}</span></td>
+      <td>{{ it.team }}</td>
+      <td class="clip">{{ it.subject }} - {{ it.body }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

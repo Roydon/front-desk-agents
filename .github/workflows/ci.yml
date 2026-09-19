@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    env:
+      LLM_PROVIDER: fake
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+      - name: Set up Python 3.11
+        run: uv venv --python 3.11 .venv
+      - name: Install dependencies
+        run: uv pip install --python .venv -e ".[dev]"
+      - name: Lint
+        run: |
+          .venv/bin/ruff check app scripts evals tests
+          .venv/bin/ruff format --check app scripts evals tests
+      - name: Test
+        run: .venv/bin/pytest -q
+      - name: Eval thresholds (FakeProvider)
+        run: .venv/bin/python -m evals.run_evals

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Monday morning at Lakeside Cove</h1>
+<p class="lead">The office was closed over the weekend. {{ summary.total }} messages arrived
+({{ summary.voicemail }} voicemail, {{ summary.email }} email). The agents sorted them before anyone came in.</p>
+
+<div class="cards">
+  <div class="card"><div class="num">{{ summary.drafted }}</div><div class="lbl">drafted replies</div></div>
+  <div class="card"><div class="num">{{ summary.human }}</div><div class="lbl">need a person</div></div>
+  <div class="card alert"><div class="num">{{ summary.alert }}</div><div class="lbl">safety alerts</div></div>
+  <div class="card"><div class="num">{{ summary.record_update }}</div><div class="lbl">records updated</div></div>
+  <div class="card"><div class="num">{{ summary.ignore }}</div><div class="lbl">ignored (spam)</div></div>
+</div>
+
+<div class="cards">
+  <div class="card"><div class="num">{{ summary.reminders }}</div><div class="lbl">chaser reminders</div></div>
+  <div class="card"><div class="num">{{ summary.pending }}</div><div class="lbl">pending approvals</div></div>
+</div>
+
+<div class="actions">
+  <a class="btn" href="/queue">Review the approval queue &rarr;</a>
+  <a class="btn ghost" href="/needs-person">See what needs a person</a>
+  <a class="btn ghost" href="/log">Activity log &amp; cost</a>
+</div>
+{% endblock %}

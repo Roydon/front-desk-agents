@@ -1,0 +1,12 @@
+.venv/
+var/*
+!var/llm_cache
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.env
+.git/
+tests/
+docs/
+.DS_Store

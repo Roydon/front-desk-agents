@@ -1,0 +1,12 @@
+# Default team for drafts by intent (used when no escalation rule matched).
+new_booking:
+  transient_slip: office
+  seasonal_slip: dockmaster
+  campsite_rv_full: office
+  campsite_rv_we: office
+  campsite_tent: office
+  default: office
+change_or_cancel: office
+documents: office
+boatyard_service: boatyard
+general_question: office

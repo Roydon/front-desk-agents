@@ -1,0 +1,41 @@
+unit_id,unit_type,max_length_ft,max_beam_ft,power,notes
+D1,transient_slip,30,11,30A,small transient
+D2,transient_slip,30,11,30A,small transient
+D3,transient_slip,30,11,30A,small transient
+D4,transient_slip,30,11,30A,small transient
+D5,transient_slip,40,14,30A/50A,medium transient
+D6,transient_slip,40,14,30A/50A,medium transient
+D7,transient_slip,50,16,50A,large transient
+D8,transient_slip,50,16,50A,large transient
+S01,seasonal_slip,45,15,30A/50A,seasonal dock
+S02,seasonal_slip,45,15,30A/50A,seasonal dock
+S03,seasonal_slip,45,15,30A/50A,seasonal dock
+S04,seasonal_slip,45,15,30A/50A,seasonal dock
+S05,seasonal_slip,45,15,30A/50A,seasonal dock
+S06,seasonal_slip,45,15,30A/50A,seasonal dock
+S07,seasonal_slip,45,15,30A/50A,seasonal dock
+S08,seasonal_slip,45,15,30A/50A,seasonal dock
+S09,seasonal_slip,45,15,30A/50A,seasonal dock
+S10,seasonal_slip,45,15,30A/50A,seasonal dock
+S11,seasonal_slip,45,15,30A/50A,seasonal dock
+S12,seasonal_slip,45,15,30A/50A,seasonal dock
+RV1,campsite_rv_full,40,,50A,full hookup
+RV2,campsite_rv_full,40,,50A,full hookup
+RV3,campsite_rv_full,40,,50A,full hookup
+RV4,campsite_rv_full,40,,50A,full hookup
+RV5,campsite_rv_full,40,,50A,full hookup
+RV6,campsite_rv_full,40,,50A,full hookup
+RV7,campsite_rv_full,40,,50A,full hookup
+RV8,campsite_rv_full,40,,50A,full hookup
+RV9,campsite_rv_full,40,,50A,full hookup
+RV10,campsite_rv_full,40,,50A,full hookup
+RV11,campsite_rv_we,32,,30A,water + electric
+RV12,campsite_rv_we,32,,30A,water + electric
+RV13,campsite_rv_we,32,,30A,water + electric
+RV14,campsite_rv_we,32,,30A,water + electric
+T1,campsite_tent,,,,"tent, up to 6 people / 2 tents"
+T2,campsite_tent,,,,"tent, up to 6 people / 2 tents"
+T3,campsite_tent,,,,"tent, up to 6 people / 2 tents"
+T4,campsite_tent,,,,"tent, up to 6 people / 2 tents"
+T5,campsite_tent,,,,"tent, up to 6 people / 2 tents"
+T6,campsite_tent,,,,"tent, up to 6 people / 2 tents"

@@ -1,0 +1,31 @@
+# Fly.io config for the Lakeside Cove front-desk demo.
+# Deploy: fly deploy --app <app> ; secrets set separately (never in this file).
+app = "marina-front-desk-demo"
+primary_region = "iad"
+
+[build]
+
+[env]
+  LLM_PROVIDER = "openrouter"
+  DEMO_TODAY = "2026-08-24"
+  TZ = "America/New_York"
+  LLM_CACHE = "1"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "20s"
+    method = "GET"
+    path = "/health"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

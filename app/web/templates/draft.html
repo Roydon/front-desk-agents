@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<a class="back" href="/queue">&larr; Back to queue</a>
+<h1>Draft #{{ d.draft_id }} <span class="pill">{{ d.team }}</span> <span class="pill">{{ d.kind }}</span></h1>
+
+<div class="grid2">
+  <section>
+    <h3>Original message</h3>
+    {% if msg %}
+      <div class="msg">
+        <div class="meta">{{ msg.channel }} - {{ msg.from_name or msg.from_phone or msg.from_email }} - {{ msg.received_at }}</div>
+        {% if msg.subject %}<div class="subj">{{ msg.subject }}</div>{% endif %}
+        <p>{{ msg.body_redacted or msg.body }}</p>
+      </div>
+    {% else %}
+      <p class="muted">Chaser reminder for reservation {{ d.reservation_id }}.</p>
+    {% endif %}
+
+    {% if triage %}
+    <h3>Triage</h3>
+    <ul class="kv">
+      <li><span>Intent</span><b>{{ triage.result.intent }}</b></li>
+      <li><span>Urgency</span><b>{{ triage.result.urgency }}</b></li>
+      <li><span>Confidence</span><b>{{ triage.result.confidence }}</b></li>
+      <li><span>Model</span><b>{{ triage.model }}</b></li>
+    </ul>
+    {% endif %}
+
+    <h3>Tools called</h3>
+    {% if d.tool_calls %}
+      {% for t in d.tool_calls %}
+        <details class="tool"><summary>{{ t.tool }}({{ t.args }})</summary><pre>{{ t.result }}</pre></details>
+      {% endfor %}
+    {% else %}<p class="muted">None.</p>{% endif %}
+
+    <h3>Policies cited</h3>
+    <p>{% for p in d.policy_ids_cited %}<span class="pill">{{ p }}</span> {% endfor %}</p>
+
+    <h3>Grounding</h3>
+    {% if d.grounding.passed %}
+      <p class="ok">Passed - every $ amount, date and unit id in the draft came from a tool result.</p>
+    {% else %}
+      <p class="bad">Failed - unmatched: {{ d.grounding.unmatched }}</p>
+    {% endif %}
+  </section>
+
+  <section>
+    <h3>Reply draft (editable)</h3>
+    <form method="post" action="/queue/{{ d.draft_id }}/approve">
+      {% if d.subject %}<div class="subj">{{ d.subject }}</div>{% endif %}
+      <textarea name="final_text" rows="14">{{ d.text }}</textarea>
+      <div class="row">
+        <button class="btn" type="submit">Approve &amp; send</button>
+        <span class="hint">Edit the text first to "edit &amp; approve" - the edit distance is logged.</span>
+      </div>
+    </form>
+    <form method="post" action="/queue/{{ d.draft_id }}/reject" class="reject-form">
+      <input type="text" name="reason" placeholder="Reason for rejecting" required>
+      <button class="btn danger" type="submit">Reject</button>
+    </form>
+  </section>
+</div>
+{% endblock %}
