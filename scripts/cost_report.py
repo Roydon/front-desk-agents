@@ -100,6 +100,7 @@ every guest-facing reply.
 
 def main() -> None:
     path = REPO_ROOT / "docs" / "COST.md"
+    path.parent.mkdir(parents=True, exist_ok=True)  # docs/ isn't in the deploy image
     path.write_text(build())
     print(f"Wrote {path.relative_to(REPO_ROOT)}")
 
