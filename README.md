@@ -31,6 +31,22 @@ chaser (14/7/2-day offsets) -> reminders for missing docs
 every step -> events table -> /log
 ```
 
+## Pages
+
+| Page | What it answers |
+|---|---|
+| `/` | What arrived overnight and what the agents did with it |
+| `/queue` · `/queue/{id}` | Every draft, with its tool calls, cited policies and grounding check. Approve / edit / reject |
+| `/needs-person` | What the agents deliberately refused to answer, and why |
+| `/alerts` | Safety calls that skipped the queue |
+| `/reservations` · `/reservations/{id}` | Who is arriving, what paperwork is outstanding, and every agent action on that booking |
+| `/autonomy` | Measured edit rates per category, and whether a category has earned the right to auto-send |
+| `/log` | Filterable, searchable record of every step, with tokens and cost |
+| `/try` | **Paste your own message and watch the agents run on it, live** |
+
+`/try` runs the real pipeline - guards, triage, rules, tools, grounding - on text you type, and
+shows every step. It is read-only: nothing is saved, so the scripted demo stays reproducible.
+
 Guarantees built into code (not prompts):
 - **Nothing auto-sends.** Every guest message is a draft; "send" writes a file to `var/outbox/`.
 - **Safety first.** Keyword + intent rules raise an alert, never a draft.

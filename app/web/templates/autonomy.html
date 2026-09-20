@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Autonomy readiness</h1>
+<p class="lead">Every reply starts out needing approval. A category only earns the right to send on its
+own once the numbers say so: enough reviews, almost no rejections, and staff barely changing the words.
+This page is that evidence - it is how we decide, not a guess.</p>
+
+<table class="list">
+  <thead>
+    <tr>
+      <th>Category</th><th>Reviewed</th><th>Rejected</th><th>Sent unchanged</th>
+      <th>Avg edit</th><th>Verdict</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td><b>{{ r.category.replace('_', ' ') }}</b></td>
+      <td>{{ r.reviewed }}</td>
+      <td>{{ r.rejected }}{% if r.reviewed %} <span class="hint">({{ '%.0f'|format(r.reject_rate * 100) }}%)</span>{% endif %}</td>
+      <td>{{ r.clean }}{% if r.clean_rate %} <span class="hint">({{ '%.0f'|format(r.clean_rate * 100) }}%)</span>{% endif %}</td>
+      <td>{{ '%.1f'|format(r.avg_edit * 100) }}%</td>
+      <td>
+        <span class="verdict {{ r.verdict_class }}">{{ r.verdict }}</span>
+        <div class="hint">{{ r.explanation }}</div>
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6" class="hint">No drafts have been reviewed yet. Approve or reject a few in the
+      <a href="/queue">approval queue</a> and this table fills in.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h3>How a category graduates</h3>
+<ul class="rules">
+  <li>At least <b>{{ min_reviewed }}</b> reviewed drafts - below that there is no evidence, whatever the average says.</li>
+  <li>Rejection rate <b>5% or lower</b>. A rejection means the agent should not have written at all.</li>
+  <li>Average edit <b>5% or lower</b> and <b>90%+ sent unchanged</b>. If staff reword it, the guest would have got it wrong.</li>
+</ul>
+<p class="hint">Safety alerts and anything routed to a person are never eligible for auto-send - they
+do not appear here by design.</p>
+{% endblock %}

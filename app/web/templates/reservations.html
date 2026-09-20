@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Reservations</h1>
+<p class="lead">What is still outstanding before each guest arrives. Red means the chaser will ask for it.</p>
+<table class="list">
+  <thead>
+    <tr>
+      <th>Reservation</th><th>Guest</th><th>Unit</th><th>Arrives</th>
+      {% for field, label in doc_fields %}<th>{{ label }}</th>{% endfor %}
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td class="mono"><a href="/reservations/{{ r.reservation_id }}">{{ r.reservation_id }}</a></td>
+      <td>{{ r.guest_name }}</td>
+      <td>{{ r.unit_id or '-' }} <span class="hint">{{ r.unit_type.replace('_', ' ') }}</span></td>
+      <td>{{ r.arrival }}</td>
+      {% for field, label in doc_fields %}
+        {% set v = r[field] %}
+        <td><span class="doc {{ v|replace('/', '') }}">{{ v.replace('_', ' ') }}</span></td>
+      {% endfor %}
+      <td>{{ r.status }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

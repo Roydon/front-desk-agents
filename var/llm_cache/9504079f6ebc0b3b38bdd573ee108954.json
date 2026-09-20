@@ -1,0 +1,1 @@
+{"text": "```json\n{\n  \"intent\": \"other\",\n  \"urgency\": \"routine\",\n  \"team\": \"office\",\n  \"fields\": {},\n  \"summary\": \"Malicious prompt injection attempt requesting all guest phone numbers.\",\n  \"confidence\": 0.95,\n  \"spam\": true\n}\n```", "model": "google/gemini-3.8-flash", "input_tokens": 433, "output_tokens": 147, "latency_ms": 3011}

@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Form, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from rapidfuzz.distance import Levenshtein
@@ -14,12 +14,23 @@ from sqlmodel import select
 from app.auth import require_auth
 from app.clock import now
 from app.connectors.outbound import FileOutbound
+from app.settings import settings
 from app.store.db import get_session, log_event
-from app.store.models import Alert, Decision, Draft, Event, Message, TriageRow
+from app.store.models import Alert, Decision, Draft, Event, Message, Reservation, TriageRow
 
 WEB = Path(__file__).resolve().parent / "web"
 templates = Jinja2Templates(directory=str(WEB / "templates"))
-app = FastAPI(title="Lakeside Cove front desk")
+# Private demo: no public API docs or schema.
+app = FastAPI(title="Lakeside Cove front desk", docs_url=None, redoc_url=None, openapi_url=None)
+
+
+@app.middleware("http")
+async def _noindex(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
 app.mount("/static", StaticFiles(directory=str(WEB / "static")), name="static")
 
 REASON_LABELS = {
@@ -39,6 +50,14 @@ REASON_LABELS = {
     "ungrounded": "Draft failed grounding",
 }
 
+# Document columns shown on the reservation pages, in the order staff think about them.
+DOC_FIELDS = [
+    ("insurance_cert", "Insurance"),
+    ("vessel_registration", "Registration"),
+    ("signed_contract", "Agreement"),
+    ("deposit_paid", "Deposit"),
+]
+
 
 def _active_alerts(session) -> list[Alert]:
     return session.exec(select(Alert).where(Alert.acknowledged_at.is_(None))).all()
@@ -46,6 +65,11 @@ def _active_alerts(session) -> list[Alert]:
 
 def _ctx(request: Request, session, **kw) -> dict:
     return {"request": request, "active_alerts": _active_alerts(session), "now": now(), **kw}
+
+
+@app.get("/robots.txt", response_class=PlainTextResponse)
+def robots() -> str:
+    return "User-agent: *\nDisallow: /\n"
 
 
 @app.get("/health")
@@ -202,7 +226,14 @@ def ack_alert(alert_id: int, _=Depends(require_auth)):
 
 
 @app.get("/log")
-def log_page(request: Request, _=Depends(require_auth)):
+def log_page(
+    request: Request,
+    agent: str = "",
+    action: str = "",
+    q: str = "",
+    _=Depends(require_auth),
+):
+    """Activity log with a filterable event table (FR-9)."""
     with get_session() as session:
         events = session.exec(select(Event).order_by(Event.event_id.desc())).all()
         drafts = session.exec(select(Draft)).all()
@@ -216,8 +247,138 @@ def log_page(request: Request, _=Depends(require_auth)):
             "pending": sum(1 for d in drafts if d.status == "pending"),
             "avg_edit": avg_edit,
         }
+        agents = sorted({e.agent for e in events if e.agent})
+        actions = sorted({e.action for e in events if e.action})
+
+        needle = q.strip().lower()
+        shown = [
+            e
+            for e in events
+            if (not agent or e.agent == agent)
+            and (not action or e.action == action)
+            and (
+                not needle
+                or needle in (e.message_id or "").lower()
+                or needle in (e.reservation_id or "").lower()
+                or needle in str(e.detail or {}).lower()
+            )
+        ]
         return templates.TemplateResponse(
-            request, "log.html", _ctx(request, session, events=events[:200], totals=totals)
+            request,
+            "log.html",
+            _ctx(
+                request,
+                session,
+                events=shown[:300],
+                totals=totals,
+                agents=agents,
+                actions=actions,
+                f_agent=agent,
+                f_action=action,
+                f_q=q,
+                matched=len(shown),
+            ),
+        )
+
+
+@app.get("/autonomy")
+def autonomy_page(request: Request, _=Depends(require_auth)):
+    """Measured edit rates per category -> is it safe to auto-send yet? (FR-7 follow-through)"""
+    from app.autonomy import MIN_REVIEWED, readiness
+
+    with get_session() as session:
+        rows = readiness(session)
+        return templates.TemplateResponse(
+            request,
+            "autonomy.html",
+            _ctx(request, session, rows=rows, min_reviewed=MIN_REVIEWED),
+        )
+
+
+@app.get("/reservations")
+def reservations_page(request: Request, _=Depends(require_auth)):
+    with get_session() as session:
+        rows = session.exec(select(Reservation).order_by(Reservation.arrival)).all()
+        return templates.TemplateResponse(
+            request, "reservations.html", _ctx(request, session, rows=rows, doc_fields=DOC_FIELDS)
+        )
+
+
+@app.get("/reservations/{reservation_id}")
+def reservation_detail(reservation_id: str, request: Request, _=Depends(require_auth)):
+    with get_session() as session:
+        res = session.get(Reservation, reservation_id)
+        if res is None:
+            return RedirectResponse("/reservations", status_code=303)
+        events = session.exec(
+            select(Event).where(Event.reservation_id == reservation_id).order_by(Event.event_id.desc())
+        ).all()
+        drafts = session.exec(select(Draft).where(Draft.reservation_id == reservation_id)).all()
+        # messages from this guest (by email or phone)
+        msgs = [
+            m
+            for m in session.exec(select(Message)).all()
+            if (res.email and m.from_email == res.email) or (res.phone and m.from_phone == res.phone)
+        ]
+        return templates.TemplateResponse(
+            request,
+            "reservation.html",
+            _ctx(
+                request,
+                session,
+                res=res,
+                events=events,
+                drafts=drafts,
+                msgs=msgs,
+                doc_fields=DOC_FIELDS,
+            ),
+        )
+
+
+@app.get("/try")
+def try_page(request: Request, _=Depends(require_auth)):
+    with get_session() as session:
+        return templates.TemplateResponse(
+            request, "try.html", _ctx(request, session, result=None, form={}, provider=settings.llm_provider)
+        )
+
+
+@app.post("/try")
+def try_run(
+    request: Request,
+    channel: str = Form("email"),
+    body: str = Form(...),
+    subject: str = Form(""),
+    from_name: str = Form(""),
+    from_email: str = Form(""),
+    from_phone: str = Form(""),
+    _=Depends(require_auth),
+):
+    """Run the real pipeline on a visitor's own message. Read-only against the demo data."""
+    from app.tryit import run_try
+
+    form = {
+        "channel": channel,
+        "body": body,
+        "subject": subject,
+        "from_name": from_name,
+        "from_email": from_email,
+        "from_phone": from_phone,
+    }
+    with get_session() as session:
+        result = run_try(
+            session,
+            channel=channel,
+            body=body,
+            subject=subject or None,
+            from_name=from_name or None,
+            from_email=from_email or None,
+            from_phone=from_phone or None,
+        )
+        return templates.TemplateResponse(
+            request,
+            "try.html",
+            _ctx(request, session, result=result, form=form, provider=settings.llm_provider),
         )
 
 

@@ -55,6 +55,8 @@ def run_inbox() -> dict:
             counts["in"] += 1
             guards = run_guards(msg.body or "")
             msg.body_redacted = guards.redacted_text
+            if guards.card_found:
+                msg.body = guards.redacted_text  # never keep card data, even in the raw column
             session.add(msg)
             log_event(
                 session, action="intake", agent="inbox", message_id=msg.message_id, detail={"channel": msg.channel}

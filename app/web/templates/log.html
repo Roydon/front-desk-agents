@@ -9,6 +9,27 @@
   <div class="card"><div class="num">{{ totals.input_tokens + totals.output_tokens }}</div><div class="lbl">tokens</div></div>
   <div class="card"><div class="num">${{ '%.4f'|format(totals.cost_usd) }}</div><div class="lbl">cost (USD)</div></div>
 </div>
+<form method="get" action="/log" class="filters">
+  <label>Agent
+    <select name="agent">
+      <option value="">all</option>
+      {% for a in agents %}<option value="{{ a }}" {% if a == f_agent %}selected{% endif %}>{{ a }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Action
+    <select name="action">
+      <option value="">all</option>
+      {% for a in actions %}<option value="{{ a }}" {% if a == f_action %}selected{% endif %}>{{ a }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Search
+    <input type="text" name="q" value="{{ f_q }}" placeholder="VM01, R-1047, reason...">
+  </label>
+  <button class="btn small" type="submit">Filter</button>
+  {% if f_agent or f_action or f_q %}<a class="btn small ghost" href="/log">Clear</a>{% endif %}
+  <span class="hint">{{ matched }} of {{ totals.events }} events</span>
+</form>
+
 <table class="list log">
   <thead><tr><th>Time</th><th>Agent</th><th>Action</th><th>Message</th><th>Detail</th></tr></thead>
   <tbody>

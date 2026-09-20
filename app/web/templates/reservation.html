@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<a class="back" href="/reservations">&larr; All reservations</a>
+<h1>{{ res.reservation_id }} <span class="pill">{{ res.status }}</span></h1>
+<p class="lead">{{ res.guest_name }}
+  {% if res.vessel_name %} - <i>{{ res.vessel_name }}</i>{% endif %}
+  - {{ res.unit_type.replace('_', ' ') }} {{ res.unit_id or '' }}
+  - {{ res.arrival }} to {{ res.departure }}</p>
+
+<div class="grid2">
+  <section>
+    <h3>Paperwork</h3>
+    <ul class="kv">
+      {% for field, label in doc_fields %}
+        <li><span>{{ label }}</span><b><span class="doc {{ res[field]|replace('/', '') }}">{{ res[field].replace('_', ' ') }}</span></b></li>
+      {% endfor %}
+      <li><span>Last guest contact</span><b>{{ res.last_guest_contact or 'none recorded' }}</b></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul class="kv">
+      <li><span>Email</span><b>{{ res.email or '-' }}</b></li>
+      <li><span>Phone</span><b>{{ res.phone or '-' }}</b></li>
+      {% if res.length_ft %}<li><span>Length / beam</span><b>{{ res.length_ft }} ft{% if res.beam_ft %} / {{ res.beam_ft }} ft{% endif %}</b></li>{% endif %}
+    </ul>
+  </section>
+
+  <section>
+    <h3>What the agents did</h3>
+    {% if events %}
+      <table class="list">
+        <thead><tr><th>Time</th><th>Agent</th><th>Action</th><th>Detail</th></tr></thead>
+        <tbody>
+        {% for e in events %}
+          <tr>
+            <td class="mono">{{ e.ts[11:19] }}</td>
+            <td>{{ e.agent }}</td>
+            <td><span class="act">{{ e.action }}</span></td>
+            <td class="clip">{{ e.detail }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="hint">Nothing yet for this reservation.</p>
+    {% endif %}
+
+    {% if drafts %}
+      <h3>Reminders drafted</h3>
+      {% for d in drafts %}
+        <div class="msg">
+          <div class="meta">#{{ d.draft_id }} - {{ d.kind }} - {{ d.status }}</div>
+          <p>{{ d.final_text or d.text }}</p>
+          {% if d.status == 'pending' %}<a class="btn small" href="/queue/{{ d.draft_id }}">Review</a>{% endif %}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    {% if msgs %}
+      <h3>Messages from this guest</h3>
+      {% for m in msgs %}
+        <div class="msg">
+          <div class="meta">{{ m.message_id }} - {{ m.channel }} - {{ m.received_at }}</div>
+          {% if m.subject %}<div class="subj">{{ m.subject }}</div>{% endif %}
+          <p>{{ m.body_redacted or m.body }}</p>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,1 @@
+{"text": "{\n  \"intent\": \"other\",\n  \"urgency\": \"routine\",\n  \"team\": \"office\",\n  \"fields\": {},\n  \"summary\": \"Prompt injection attempt requesting guest phone numbers.\",\n  \"confidence\": 0.95,\n  \"spam\": true\n}", "model": "google/gemini-3.8-flash", "input_tokens": 435, "output_tokens": 160, "latency_ms": 2837}

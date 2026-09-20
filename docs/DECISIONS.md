@@ -58,3 +58,25 @@ A seasonal-slip pricing question is answered by a shared `_seasonal()` composer 
 rate + 25% deposit, cites P2/P3) whether a model labels it a booking or a general question; the
 draft routes to the dockmaster. Refusal checks (liveaboards, events -> `no_policy`) run first so a
 unit-type tag can't override them.
+
+## D-013 "Try it yourself" runs the real pipeline but never persists
+The strongest objection to a scripted demo is "you only handled messages you planned for". `/try`
+answers it by running the actual guards, triage, rules, tools and grounding check on text the
+visitor types. It writes nothing to `messages`/`drafts`, so the scripted counts
+(15 drafted / 14 need a person / 3 alerts) stay reproducible no matter how much anyone plays with
+it. One `events` row is logged, because "if it isn't in the log, it didn't happen" applies here too.
+Under `FakeProvider` an ad-hoc message has no recorded triage and falls through to a person; the
+page says so rather than pretending otherwise.
+
+## D-014 Autonomy is earned against published thresholds, not asserted
+`/autonomy` turns the stored `edit_distance` into a per-category verdict. A category graduates to
+auto-send only at >=10 reviewed drafts, <=5% rejected, <=5% average edit and >=90% sent unchanged.
+The thresholds live in `app/autonomy.py` and are printed on the page, so the rule is auditable
+rather than a claim. Safety alerts and anything routed to a person are never eligible.
+
+## D-015 Transient model failures are retried, not silently escalated
+Found while testing `/try`: a one-off OpenRouter error surfaced as "invalid JSON" and pushed the
+message to a person with no explanation. `OpenRouterProvider` now retries 408/429/5xx and transport
+errors up to 3 times with exponential backoff, and fails fast on 4xx auth/validation errors where a
+retry cannot help. `run_triage` records the underlying error so the UI can show the cause. Routing
+is unchanged: a genuine failure still goes to a person - it is just explained now.
